@@ -35,14 +35,15 @@
                 @Html.LabelFor(m => m.Score)<br />
                 @if (Model.Score == -1)
                 {
-                    <span class="text-danger">@ViewData["MSG"]</span><br />
+                    <span class="text-danger">@ViewData["MSG"]</span><br /><br />
+                    <button id="report" class="btn btn-info" >Generate Report Card</button>
                 }
                 @if (Model.Score != -1)
                 {
                     @Html.DisplayFor(m => m.Score)<br />
                     <b>You have Successfully submitted exam. Please click below to get result.</b><br /><br />
-                }<br />            
-                <button id="report">Generate Report Card</button>
+                    <button id="report">Generate Report Card</button>
+                }<br />                          
                 <span id="testid" style="display:none">@ViewData["testId"]</span>
                 <div class="ReadBlock">
                     

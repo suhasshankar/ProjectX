@@ -169,80 +169,120 @@ namespace ProjectX.Controllers
                 return RedirectToAction("Authenticate", "Users");
             else
             {
-                using (DBEntities dbContext = new DBEntities())
+                try
                 {
-                    Users usercookie = Session["usercookie"] as Users;
-                    Courses SelectedCourse = Session["SelectedCourse"] as Courses;
-                    Papers SelectedPaper = Session["SelectedPaper"] as Papers;
-                    Levels SelectedLevel = Session["SelectedLevel"] as Levels;
-                    Guid TestId = new Guid(Session["TestId"].ToString());
-                    Scores scoreCard = new Scores();
-
-                    var testType = dbContext.AllocateCourse.Where(a => a.UserId == usercookie.Id && a.CourseId == SelectedCourse.CourseId).FirstOrDefault();
-
-                    StudentTestLog checkIfAlreadyTaken = dbContext.StudentTestLog.Where(s => s.UserId == usercookie.Id && s.CourseId == SelectedCourse.CourseId
-                       && s.PaperId == SelectedPaper.PaperId && s.Level == SelectedLevel.Level).FirstOrDefault();
-
-                    var isCorrected = dbContext.Scores.Where(s => s.TestId == checkIfAlreadyTaken.TestId).FirstOrDefault();
-
-                    scoreCard.CourseName = dbContext.Courses.Where(c => c.CourseId == checkIfAlreadyTaken.CourseId).Select(s => s.CourseName).FirstOrDefault().ToString();
-                    scoreCard.paperName = dbContext.Papers.Where(c => c.PaperId == checkIfAlreadyTaken.PaperId).Select(s => s.PaperName).FirstOrDefault().ToString();
-                    scoreCard.LevelName = dbContext.Levels.Where(c => c.Level == checkIfAlreadyTaken.Level).Select(s => s.LevelName).FirstOrDefault().ToString();
-                    scoreCard.userName = dbContext.Users.Where(c => c.Id == usercookie.Id).Select(s => s.UserName).FirstOrDefault().ToString();
-
-                    if (testType.TestType == 1 && isCorrected == null)
+                    using (DBEntities dbContext = new DBEntities())
                     {
-                        List<StudentTestLog> result = dbContext.StudentTestLog.Where(q => q.CourseId == SelectedCourse.CourseId &&
-                                                        q.PaperId == SelectedPaper.PaperId &&
-                                                        q.Level == SelectedLevel.Level &&
-                                                        q.isCorrected == false &&
-                                                        q.TestId == TestId).ToList();
+                        Users usercookie = Session["usercookie"] as Users;
+                        Courses SelectedCourse = Session["SelectedCourse"] as Courses;
+                        Papers SelectedPaper = Session["SelectedPaper"] as Papers;
+                        Levels SelectedLevel = Session["SelectedLevel"] as Levels;
+                        Guid TestId = new Guid(Session["TestId"].ToString());
+                        Scores scoreCard = new Scores();
 
-                        int score = 0;
-                        foreach (StudentTestLog answer in result)
+                        var testType = dbContext.AllocateCourse.Where(a => a.UserId == usercookie.Id && a.CourseId == SelectedCourse.CourseId).FirstOrDefault();
+
+                        StudentTestLog checkIfAlreadyTaken = dbContext.StudentTestLog.Where(s => s.UserId == usercookie.Id && s.CourseId == SelectedCourse.CourseId
+                           && s.PaperId == SelectedPaper.PaperId && s.Level == SelectedLevel.Level).FirstOrDefault();
+
+                        var questions = dbContext.GetQuestions(SelectedCourse.CourseId, SelectedPaper.PaperId, usercookie.Id, SelectedLevel.Level).ToList();
+                        var isCorrected = dbContext.Scores.Where(s => s.TestId == checkIfAlreadyTaken.TestId).FirstOrDefault();
+
+                        scoreCard.CourseName = dbContext.Courses.Where(c => c.CourseId == checkIfAlreadyTaken.CourseId).Select(s => s.CourseName).FirstOrDefault().ToString();
+                        scoreCard.paperName = dbContext.Papers.Where(c => c.PaperId == checkIfAlreadyTaken.PaperId).Select(s => s.PaperName).FirstOrDefault().ToString();
+                        scoreCard.LevelName = dbContext.Levels.Where(c => c.Level == checkIfAlreadyTaken.Level).Select(s => s.LevelName).FirstOrDefault().ToString();
+                        scoreCard.userName = dbContext.Users.Where(c => c.Id == usercookie.Id).Select(s => s.UserName).FirstOrDefault().ToString();
+
+                        if (testType.TestType == 1 && isCorrected == null)
                         {
-                            var isCorrect = dbContext.Answers.Where(a => a.QId == answer.QId && a.CorrectOption == answer.SelectedOption).FirstOrDefault();
-                            if (isCorrect != null)
-                                score++;
-                            answer.isCorrected = true;
-                            dbContext.SaveChanges();
-                        }
-                        //Delete existing duplicate test id if already present
-                        var DuplicateList = dbContext.Scores.Where(s => s.TestId == TestId).ToList();
-                        if (DuplicateList.Count >= 1)
-                        {
-                            foreach (Scores deletescore in DuplicateList)
+                            List<StudentTestLog> result = dbContext.StudentTestLog.Where(q => q.CourseId == SelectedCourse.CourseId &&
+                                                            q.PaperId == SelectedPaper.PaperId &&
+                                                            q.Level == SelectedLevel.Level &&
+                                                            q.isCorrected == false &&
+                                                            q.TestId == TestId).ToList();
+                            int score = 0;
+                            foreach (StudentTestLog answer in result)
                             {
-                                dbContext.Scores.Remove(deletescore);
+                                Scores captureScore = new Scores();
+                                var isCorrect = dbContext.Answers.Where(a => a.QId == answer.QId && a.CorrectOption == answer.SelectedOption).FirstOrDefault();
+                                if (isCorrect != null)
+                                {
+                                    score++;
+                                    captureScore.Score = 1;
+                                }
+                                else
+                                    captureScore.Score = 0;
+
+                                answer.isCorrected = true;
+                                dbContext.SaveChanges();
+
+                                //Delete existing duplicate test id if already present
+                                var DuplicateScoreList = dbContext.Scores.Where(s => s.TestId == TestId && s.QId == answer.QId).ToList();
+                                if (DuplicateScoreList.Count >= 1)
+                                {
+                                    foreach (Scores deletescore in DuplicateScoreList)
+                                    {
+                                        dbContext.Scores.Remove(deletescore);
+                                        dbContext.SaveChanges();
+                                    }
+                                }
+                                //Add fresh score to the board
+                                captureScore.QId = answer.QId;
+                                captureScore.TestId = TestId;
+                                captureScore.UserId = answer.UserId;
+                                captureScore.LastUpdatedDate = DateTime.UtcNow;
+                                dbContext.Scores.Add(captureScore);
                                 dbContext.SaveChanges();
                             }
-                        }
-                        //Add fresh score to the board
-                        scoreCard.TestId = TestId;
-                        scoreCard.UserId = usercookie.Id;
-                        scoreCard.LastUpdatedDate = DateTime.UtcNow;
-                        scoreCard.Score = score;
-                        dbContext.Scores.Add(scoreCard);
-                        dbContext.SaveChanges();
 
-                        Session["TestId"] = null;
-                        return View(scoreCard);
+                            //Delete existing duplicate test id if already present
+                            var DuplicateCardList = dbContext.ReportCard.Where(s => s.TestId == TestId).ToList();
+                            if (DuplicateCardList.Count >= 1)
+                            {
+                                foreach (ReportCard deleteCard in DuplicateCardList)
+                                {
+                                    dbContext.ReportCard.Remove(deleteCard);
+                                    dbContext.SaveChanges();
+                                }
+                            }
+
+                            //Add fresh report card to the board
+                            ReportCard card = new ReportCard();
+                            card.TestId = TestId;
+                            card.UserId = usercookie.Id;
+                            card.CourseId = SelectedCourse.CourseId;
+                            card.Paperid = SelectedPaper.PaperId;
+                            card.LevelId = SelectedLevel.Level;
+                            card.LastUpdated = DateTime.UtcNow;
+                            card.IsRevaluate = false;
+                            card.TotalScore = dbContext.Scores.Where(s => s.TestId == TestId).Select(s => s.Score).Sum();
+                            dbContext.ReportCard.Add(card);
+                            dbContext.SaveChanges();
+
+                            scoreCard.Score = card.TotalScore;
+                            Session["TestId"] = null;
+                            return View(scoreCard);
+                        }
+                        else if (checkIfAlreadyTaken.TestId != TestId)
+                        {
+                            Session["TestId"] = null;
+                            scoreCard.Score = -1;
+                            ViewData["msg"] = "Already Taken. Please contact admin if you did not attempted this paper.";
+                            ViewData["testId"] = checkIfAlreadyTaken.TestId;
+                            return View(scoreCard);
+                        }
+                        else
+                        {
+                            Session["TestId"] = null;
+                            scoreCard.Score = -1;
+                            ViewData["msg"] = "Review Under Progress. You will be notified soon!!.";
+                            return View(scoreCard);
+                        }
                     }
-                    else if (checkIfAlreadyTaken != null)
-                    {
-                        Session["TestId"] = null;
-                        scoreCard.Score = -1;
-                        ViewData["msg"] = "Already Taken. Please contact admin if you did not attempted this paper.";
-                        ViewData["testId"] = checkIfAlreadyTaken.TestId;
-                        return View(scoreCard);
-                    }
-                    else
-                    {
-                        Session["TestId"] = null;
-                        scoreCard.Score = -1;
-                        ViewData["msg"] = "Review Under Progress. You will be notified soon!!.";
-                        return View(scoreCard);
-                    }
+                }
+                catch
+                {
+                    return RedirectToAction("GetCourse");
                 }
             }
         }

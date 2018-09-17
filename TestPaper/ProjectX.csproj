@@ -188,7 +188,6 @@
     <Compile Include="Controllers\CoursesController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Controllers\StudentReportController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Models\AllocateCourse.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
