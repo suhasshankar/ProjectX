@@ -1,0 +1,591 @@
+﻿USE [master]
+GO
+/****** Object:  Database [ProjectX]    Script Date: 9/17/2018 3:53:23 PM ******/
+CREATE DATABASE [ProjectX]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'ProjectX', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\ProjectX.mdf' , SIZE = 4096KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
+ LOG ON 
+( NAME = N'ProjectX_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\ProjectX_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+GO
+ALTER DATABASE [ProjectX] SET COMPATIBILITY_LEVEL = 120
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [ProjectX].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [ProjectX] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [ProjectX] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [ProjectX] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [ProjectX] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [ProjectX] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [ProjectX] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [ProjectX] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [ProjectX] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [ProjectX] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [ProjectX] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [ProjectX] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [ProjectX] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [ProjectX] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [ProjectX] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [ProjectX] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [ProjectX] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [ProjectX] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [ProjectX] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [ProjectX] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [ProjectX] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [ProjectX] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [ProjectX] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [ProjectX] SET RECOVERY FULL 
+GO
+ALTER DATABASE [ProjectX] SET  MULTI_USER 
+GO
+ALTER DATABASE [ProjectX] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [ProjectX] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [ProjectX] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [ProjectX] SET TARGET_RECOVERY_TIME = 0 SECONDS 
+GO
+ALTER DATABASE [ProjectX] SET DELAYED_DURABILITY = DISABLED 
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'ProjectX', N'ON'
+GO
+USE [ProjectX]
+GO
+/****** Object:  Table [dbo].[AllocateCourse]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AllocateCourse](
+	[AId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[CourseId] [int] NOT NULL,
+	[TestType] [int] NOT NULL,
+	[LastUpdate] [datetime] NULL,
+	[LastUpdateBy] [int] NULL,
+ CONSTRAINT [PK_AllocateCourse] PRIMARY KEY CLUSTERED 
+(
+	[AId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Answers]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Answers](
+	[AnswerId] [int] IDENTITY(1,1) NOT NULL,
+	[QId] [int] NOT NULL,
+	[CorrectOption] [int] NULL,
+	[ComprehensiveAnswer] [nchar](10) NULL,
+	[LastUpdate] [datetime] NULL,
+	[LastUpdatedBy] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Answers] PRIMARY KEY CLUSTERED 
+(
+	[AnswerId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Courses]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Courses](
+	[CourseId] [int] IDENTITY(1,1) NOT NULL,
+	[CourseName] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Courses] PRIMARY KEY CLUSTERED 
+(
+	[CourseId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[ExamType]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExamType](
+	[TestType] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Table] PRIMARY KEY CLUSTERED 
+(
+	[TestType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Levels]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Levels](
+	[Level] [int] IDENTITY(1,1) NOT NULL,
+	[LevelName] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Levels] PRIMARY KEY CLUSTERED 
+(
+	[Level] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Options]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Options](
+	[QId] [int] NOT NULL,
+	[OptionId] [int] IDENTITY(1,1) NOT NULL,
+	[OptionText] [nvarchar](max) NULL,
+	[Comprehensive] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Options] PRIMARY KEY CLUSTERED 
+(
+	[OptionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[OptionTypes]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OptionTypes](
+	[TypeId] [int] IDENTITY(1,1) NOT NULL,
+	[TypeName] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_OptionTypes] PRIMARY KEY CLUSTERED 
+(
+	[TypeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Papers]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Papers](
+	[PaperId] [int] IDENTITY(1,1) NOT NULL,
+	[CourseId] [int] NOT NULL,
+	[PaperName] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Papers] PRIMARY KEY CLUSTERED 
+(
+	[PaperId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Questions]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Questions](
+	[QId] [int] IDENTITY(1,1) NOT NULL,
+	[CourseId] [int] NOT NULL,
+	[PaperId] [int] NOT NULL,
+	[Level] [int] NOT NULL,
+	[Question] [nvarchar](max) NOT NULL,
+	[Duration] [int] NULL,
+	[OptionType] [int] NOT NULL,
+ CONSTRAINT [PK_Questions] PRIMARY KEY CLUSTERED 
+(
+	[QId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[ReportCard]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ReportCard](
+	[ReportId] [int] IDENTITY(1,1) NOT NULL,
+	[TestId] [uniqueidentifier] NOT NULL,
+	[UserId] [int] NOT NULL,
+	[CourseId] [int] NOT NULL,
+	[Paperid] [int] NOT NULL,
+	[LevelId] [int] NOT NULL,
+	[TotalScore] [int] NOT NULL,
+	[LastUpdated] [datetime] NULL,
+	[IsRevaluate] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ReportId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Roles]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[RoleId] [int] IDENTITY(1,1) NOT NULL,
+	[RoleName] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Scores]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Scores](
+	[TestId] [uniqueidentifier] NOT NULL,
+	[ScoreId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[Score] [int] NOT NULL,
+	[LastUpdatedDate] [datetime] NULL,
+	[QId] [int] NOT NULL,
+	[LastUpdatedBy] [int] NULL,
+ CONSTRAINT [PK_Scores] PRIMARY KEY CLUSTERED 
+(
+	[ScoreId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[StudentTestLog]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StudentTestLog](
+	[LogId] [int] IDENTITY(1,1) NOT NULL,
+	[TestId] [uniqueidentifier] NOT NULL,
+	[UserId] [int] NOT NULL,
+	[CourseId] [int] NOT NULL,
+	[PaperId] [int] NOT NULL,
+	[Level] [int] NOT NULL,
+	[QId] [int] NOT NULL,
+	[SelectedOption] [int] NULL,
+	[MultiLineAnswer] [nvarchar](max) NULL,
+	[isCorrected] [bit] NOT NULL,
+ CONSTRAINT [PK_StudentTestLog] PRIMARY KEY CLUSTERED 
+(
+	[LogId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserName] [nvarchar](max) NOT NULL,
+	[Password] [nvarchar](max) NULL,
+	[EmailId] [nvarchar](max) NULL,
+	[RoleId] [int] NOT NULL,
+	[Status] [bit] NOT NULL DEFAULT ((1)),
+	[IsReset] [bit] NOT NULL DEFAULT ((1)),
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+ALTER TABLE [dbo].[ReportCard] ADD  DEFAULT ((0)) FOR [IsRevaluate]
+GO
+ALTER TABLE [dbo].[StudentTestLog] ADD  DEFAULT ((0)) FOR [isCorrected]
+GO
+ALTER TABLE [dbo].[Answers]  WITH CHECK ADD  CONSTRAINT [FK_Table_Questions] FOREIGN KEY([QId])
+REFERENCES [dbo].[Questions] ([QId])
+GO
+ALTER TABLE [dbo].[Answers] CHECK CONSTRAINT [FK_Table_Questions]
+GO
+ALTER TABLE [dbo].[Options]  WITH CHECK ADD  CONSTRAINT [FK_Options_Questions] FOREIGN KEY([QId])
+REFERENCES [dbo].[Questions] ([QId])
+GO
+ALTER TABLE [dbo].[Options] CHECK CONSTRAINT [FK_Options_Questions]
+GO
+ALTER TABLE [dbo].[Options]  WITH CHECK ADD  CONSTRAINT [FK1_Options_Questions] FOREIGN KEY([QId])
+REFERENCES [dbo].[Questions] ([QId])
+GO
+ALTER TABLE [dbo].[Options] CHECK CONSTRAINT [FK1_Options_Questions]
+GO
+ALTER TABLE [dbo].[Options]  WITH CHECK ADD  CONSTRAINT [FK2_Options_Questions] FOREIGN KEY([QId])
+REFERENCES [dbo].[Questions] ([QId])
+GO
+ALTER TABLE [dbo].[Options] CHECK CONSTRAINT [FK2_Options_Questions]
+GO
+ALTER TABLE [dbo].[Papers]  WITH CHECK ADD  CONSTRAINT [FK_Papers_Courses] FOREIGN KEY([CourseId])
+REFERENCES [dbo].[Courses] ([CourseId])
+GO
+ALTER TABLE [dbo].[Papers] CHECK CONSTRAINT [FK_Papers_Courses]
+GO
+ALTER TABLE [dbo].[Questions]  WITH CHECK ADD  CONSTRAINT [FK_Questions_Courses] FOREIGN KEY([CourseId])
+REFERENCES [dbo].[Courses] ([CourseId])
+GO
+ALTER TABLE [dbo].[Questions] CHECK CONSTRAINT [FK_Questions_Courses]
+GO
+ALTER TABLE [dbo].[Questions]  WITH CHECK ADD  CONSTRAINT [FK_Questions_Levels] FOREIGN KEY([Level])
+REFERENCES [dbo].[Levels] ([Level])
+GO
+ALTER TABLE [dbo].[Questions] CHECK CONSTRAINT [FK_Questions_Levels]
+GO
+ALTER TABLE [dbo].[Questions]  WITH CHECK ADD  CONSTRAINT [FK_Questions_OptionTypes] FOREIGN KEY([OptionType])
+REFERENCES [dbo].[OptionTypes] ([TypeId])
+GO
+ALTER TABLE [dbo].[Questions] CHECK CONSTRAINT [FK_Questions_OptionTypes]
+GO
+ALTER TABLE [dbo].[Questions]  WITH CHECK ADD  CONSTRAINT [FK_Questions_Papers] FOREIGN KEY([PaperId])
+REFERENCES [dbo].[Papers] ([PaperId])
+GO
+ALTER TABLE [dbo].[Questions] CHECK CONSTRAINT [FK_Questions_Papers]
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_Roles] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[Roles] ([RoleId])
+GO
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_Roles]
+GO
+/****** Object:  StoredProcedure [dbo].[GetAnswers]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetAnswers]
+	@userId int = 0
+AS
+BEGIN
+	SELECT DISTINCT CourseId,PaperId,Level FROM StudentTestLog s
+	INNER JOIN Users u ON s.UserId=u.Id
+	WHERE s.UserId = @userId 
+	AND isCorrected = 1
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetQuestions]    Script Date: 9/17/2018 3:53:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetQuestions]
+	@CourseId int = 0,
+	@PaperId int = 0,
+	@UserId int = 0,
+	@LevelId int = 0
+AS
+     DECLARE @ExcludeQuestionIds TABLE(
+	    QId int Not Null
+	 )
+	 DECLARE @OptionsTypes TABLE(
+	    Id int Not Null
+	 )
+	 INSERT INTO @ExcludeQuestionIds
+	 SELECT QId FROM StudentTestLog 
+	 WHERE CourseId = @CourseId AND
+	 PaperId = @PaperId AND
+	 UserId = @UserId
+
+	 DECLARE @testType INT
+	 SET @testType = (SELECT TestType FROM AllocateCourse WHERE CourseId = @CourseId AND UserId=@UserId)
+
+	 --OnlyOptions
+	 IF(@testType = 1)
+	 BEGIN
+	   INSERT INTO @OptionsTypes
+	   SELECT TypeId FROM OptionTypes WHERE TypeName IN ('Radio','CheckBox')
+	 END
+	 --OnlyComprehensive
+	 IF(@testType = 2)
+	 BEGIN
+	   INSERT INTO @OptionsTypes
+	   SELECT TypeId FROM OptionTypes WHERE TypeName = ('MultiLine TextBox')
+	 END
+	 --BothOptionsComprehensive
+	 IF(@testType = 3)
+	 BEGIN
+	   INSERT INTO @OptionsTypes
+	   SELECT TypeId FROM OptionTypes WHERE TypeName IN ('Radio','CheckBox','MultiLine TextBox')
+	 END
+	SELECT q.QId,
+	q.CourseId,
+	q.PaperId,
+	q.Question,
+	q.Duration,
+	q.OptionType,
+	o.OptionText,
+	o.OptionId,
+	o.Comprehensive FROM Questions q
+	LEFT JOIN Options o ON q.QId = o.QId
+	INNER JOIN Levels l ON l.Level = q.Level
+	where q.CourseId = @CourseId AND 
+	q.PaperId = @PaperId AND
+	Q.Level = @LevelId AND
+	Q.QId NOT IN (SELECT QId FROM @ExcludeQuestionIds) AND
+	Q.OptionType IN (SELECT Id FROM @OptionsTypes)
+GO
+USE [master]
+GO
+ALTER DATABASE [ProjectX] SET  READ_WRITE 
+GO
+
+USE [ProjectX]
+GO
+SET IDENTITY_INSERT [dbo].[Courses] ON
+INSERT INTO [dbo].[Courses] ([CourseId], [CourseName]) VALUES (1, N'ASP.NET')
+INSERT INTO [dbo].[Courses] ([CourseId], [CourseName]) VALUES (2, N'Java')
+INSERT INTO [dbo].[Courses] ([CourseId], [CourseName]) VALUES (3, N'PHP')
+INSERT INTO [dbo].[Courses] ([CourseId], [CourseName]) VALUES (4, N'AI')
+INSERT INTO [dbo].[Courses] ([CourseId], [CourseName]) VALUES (5, N'ML')
+INSERT INTO [dbo].[Courses] ([CourseId], [CourseName]) VALUES (8, N'AWS Cloud Technologies')
+SET IDENTITY_INSERT [dbo].[Courses] OFF
+
+SET IDENTITY_INSERT [dbo].[ExamType] ON
+INSERT INTO [dbo].[ExamType] ([TestType], [Name]) VALUES (1, N'OnlyOptions')
+INSERT INTO [dbo].[ExamType] ([TestType], [Name]) VALUES (2, N'OnlyComprehensive')
+INSERT INTO [dbo].[ExamType] ([TestType], [Name]) VALUES (3, N'BothOptionsComprehensive')
+SET IDENTITY_INSERT [dbo].[ExamType] OFF
+
+SET IDENTITY_INSERT [dbo].[Levels] ON
+INSERT INTO [dbo].[Levels] ([Level], [LevelName]) VALUES (1, N'Beginner')
+INSERT INTO [dbo].[Levels] ([Level], [LevelName]) VALUES (2, N'Intermediate')
+INSERT INTO [dbo].[Levels] ([Level], [LevelName]) VALUES (3, N'Expert')
+SET IDENTITY_INSERT [dbo].[Levels] OFF
+
+SET IDENTITY_INSERT [dbo].[OptionTypes] ON
+INSERT INTO [dbo].[OptionTypes] ([TypeId], [TypeName]) VALUES (1, N'Radio')
+INSERT INTO [dbo].[OptionTypes] ([TypeId], [TypeName]) VALUES (2, N'CheckBox')
+INSERT INTO [dbo].[OptionTypes] ([TypeId], [TypeName]) VALUES (3, N'MultiLine TextBox')
+SET IDENTITY_INSERT [dbo].[OptionTypes] OFF
+
+SET IDENTITY_INSERT [dbo].[Papers] ON
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (1, 1, N'Basics Of C#')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (2, 1, N'ADO.NET')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (3, 1, N'LINQ')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (4, 1, N'SQL SERVER')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (5, 1, N'Basics of C# OOPS')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (9, 2, N'Basics Of Java')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (10, 2, N'Spring Framework')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (11, 2, N'OOPS Java')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (12, 2, N'Java Data Types')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (13, 3, N'Basics Of PHP')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (14, 3, N'PHP Syntax')
+INSERT INTO [dbo].[Papers] ([PaperId], [CourseId], [PaperName]) VALUES (15, 3, N'PHP Data Types')
+SET IDENTITY_INSERT [dbo].[Papers] OFF
+
+SET IDENTITY_INSERT [dbo].[Roles] ON
+INSERT INTO [dbo].[Roles] ([RoleId], [RoleName]) VALUES (1, N'Guest')
+INSERT INTO [dbo].[Roles] ([RoleId], [RoleName]) VALUES (2, N'Admin')
+SET IDENTITY_INSERT [dbo].[Roles] OFF
+
+SET IDENTITY_INSERT [dbo].[Users] ON
+INSERT INTO [dbo].[Users] ([Id], [UserName], [Password], [EmailId], [RoleId], [Status], [IsReset]) VALUES (4, N'Suhas s', N'12345', N'suhas.shankar@thomsonretuers.com', 1, 1, 1)
+INSERT INTO [dbo].[Users] ([Id], [UserName], [Password], [EmailId], [RoleId], [Status], [IsReset]) VALUES (5, N'admin', N'admin', N'admin@tr.com', 2, 1, 1)
+SET IDENTITY_INSERT [dbo].[Users] OFF
+
+
+SET IDENTITY_INSERT [dbo].[Questions] ON
+INSERT INTO [dbo].[Questions] ([QId], [CourseId], [PaperId], [Level], [Question], [Duration], [OptionType]) VALUES (8, 1, 1, 1, N'Brefly Explain OOPS concept.', 5, 3)
+INSERT INTO [dbo].[Questions] ([QId], [CourseId], [PaperId], [Level], [Question], [Duration], [OptionType]) VALUES (30, 1, 1, 1, N'How many Bytes are stored by ‘Long’ Data type in C# .net?', 1, 1)
+INSERT INTO [dbo].[Questions] ([QId], [CourseId], [PaperId], [Level], [Question], [Duration], [OptionType]) VALUES (31, 1, 1, 1, N'Choose “.NET class” name from which data type “UInt” is derived ?', 1, 1)
+INSERT INTO [dbo].[Questions] ([QId], [CourseId], [PaperId], [Level], [Question], [Duration], [OptionType]) VALUES (32, 1, 1, 1, N'Correct Declaration of Values to variables ‘a’ and ‘b’?', 1, 1)
+INSERT INTO [dbo].[Questions] ([QId], [CourseId], [PaperId], [Level], [Question], [Duration], [OptionType]) VALUES (33, 1, 1, 1, N'Which data type should be more preferred for storing a simple number like 35 to improve execution speed of a program?', 1, 1)
+INSERT INTO [dbo].[Questions] ([QId], [CourseId], [PaperId], [Level], [Question], [Duration], [OptionType]) VALUES (34, 1, 1, 1, N'Correct Set of Code for given data ‘a’ and ‘b’ to print output for ‘c’ as 74 ?', 2, 1)
+SET IDENTITY_INSERT [dbo].[Questions] OFF
+
+SET IDENTITY_INSERT [dbo].[Options] ON
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (30, 83, N'1', N'1')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (30, 84, N'8', N'8')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (30, 85, N'4', N'4')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (30, 86, N'2', N'2')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (31, 89, N'System.Int16', N'System.Int16')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (31, 90, N'System.UInt32', N'System.UInt32')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (31, 91, N'System.UInt64', N'System.UInt64')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (31, 92, N'System.UInt16', N'System.UInt16')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (32, 94, N'int a = 32, b = 40.6;', N'int a = 32, b = 40.6;')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (32, 95, N'int a = 42; b = 40;', N'int a = 42; b = 40;')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (32, 96, N'int a = 32; int b = 40;', N'int a = 32; int b = 40;')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (32, 97, N'int a = b = 42;', N'int a = b = 42;')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (33, 100, N'sbyte', N'sbyte')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (33, 101, N'short', N'short')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (33, 102, N'Hint', N'Hint')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (33, 103, N'Long', N'Long')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (34, 104, N'   int a = 12;
+   float b = 6.2f;
+   int c;
+   c = a / b + a * b;
+   Console.WriteLine(c);', N'   int a = 12;
+   float b = 6.2f;
+   int c;
+   c = a / b + a * b;
+   Console.WriteLine(c);')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (34, 105, N'int a = 12;
+   float b = 6.2f;
+   int c;
+   c = a / convert.ToInt32(b) + a * b;
+   Console.WriteLine(c);', N'int a = 12;
+   float b = 6.2f;
+   int c;
+   c = a / convert.ToInt32(b) + a * b;
+   Console.WriteLine(c);')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (34, 106, N'int a = 12;
+   float b = 6.2f;
+   int c;
+   c = a / convert.ToInt32(b) + a * convert.ToInt32(b);
+   Console.WriteLine(c);', N'int a = 12;
+   float b = 6.2f;
+   int c;
+   c = a / convert.ToInt32(b) + a * convert.ToInt32(b);
+   Console.WriteLine(c);')
+INSERT INTO [dbo].[Options] ([QId], [OptionId], [OptionText], [Comprehensive]) VALUES (34, 107, N'int a = 12;
+    float b = 6.2f;
+    int c;
+    c = convert.ToInt32(a / b + a * b);
+    Console.WriteLine(c);', N'int a = 12;
+    float b = 6.2f;
+    int c;
+    c = convert.ToInt32(a / b + a * b);
+    Console.WriteLine(c);')
+SET IDENTITY_INSERT [dbo].[Options] OFF
+
+SET IDENTITY_INSERT [dbo].[Answers] ON
+INSERT INTO [dbo].[Answers] ([AnswerId], [QId], [CorrectOption], [ComprehensiveAnswer], [LastUpdate], [LastUpdatedBy]) VALUES (5, 30, 84, NULL, N'2018-09-01 15:26:14', N'admin')
+INSERT INTO [dbo].[Answers] ([AnswerId], [QId], [CorrectOption], [ComprehensiveAnswer], [LastUpdate], [LastUpdatedBy]) VALUES (6, 31, 90, NULL, N'2018-09-01 15:27:26', N'admin')
+INSERT INTO [dbo].[Answers] ([AnswerId], [QId], [CorrectOption], [ComprehensiveAnswer], [LastUpdate], [LastUpdatedBy]) VALUES (7, 32, 96, NULL, N'2018-09-01 15:28:39', N'admin')
+INSERT INTO [dbo].[Answers] ([AnswerId], [QId], [CorrectOption], [ComprehensiveAnswer], [LastUpdate], [LastUpdatedBy]) VALUES (8, 33, 100, NULL, N'2018-09-01 15:35:02', N'admin')
+INSERT INTO [dbo].[Answers] ([AnswerId], [QId], [CorrectOption], [ComprehensiveAnswer], [LastUpdate], [LastUpdatedBy]) VALUES (9, 34, 106, NULL, N'2018-09-01 15:37:35', N'admin')
+SET IDENTITY_INSERT [dbo].[Answers] OFF
