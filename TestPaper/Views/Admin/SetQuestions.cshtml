@@ -1,0 +1,204 @@
+﻿@model ProjectX.Models.setQuestions
+
+@{
+    ViewBag.Title = "Set Questions";
+}
+
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Admin/_LeftAdminPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Set Questions
+            </div>
+            <div class="panel-body">
+                <div class="BlockQ" style="border: 1px solid #bdbdbd; width: inherit; border-radius: 4px; margin-top: 40px; background-color: #f2f2f2; padding: inherit;">
+                    @using (Html.BeginForm("SetQuestions", "Admin", FormMethod.Post))
+                    {
+                        @Html.Label("Select below course and its technology to Add Questions:")<br />
+                        @Html.DropDownList("CourseId", new SelectList(string.Empty, "Value", "Text"), "select Technology", new { @class = "form-control", id = "Course" })<br />
+                        @Html.DropDownList("PaperId", new SelectList(string.Empty, "Value", "Text"), "select Paper", new { @class = "form-control", id = "paper" })<br />
+                            @Html.DropDownList("Level", new SelectList(string.Empty, "Value", "Text"), "select Level", new { @class = "form-control", id = "level" })<br />
+
+                            <label for="questions"><b>Question :</b></label><br />
+                            @Html.TextAreaFor(c => c.Question, new { @class = "form-control", @placeholder = "Type Question" })
+                            @Html.ValidationMessageFor(model => model.Question, "", new { @class = "text-danger" })<br />
+
+                            @Html.Label("Select Option type below:")<br />
+                            @Html.DropDownList("type", new SelectList(string.Empty, "Value", "Text"), "select Level", new { @class = "form-control", id = "option" })<br />
+
+                            <label for="option"><b>Duration</b></label><br />
+                            @Html.EditorFor(c => c.Duration, new { htmlAttributes = new { @class = "form-control", @placeholder = "Duration of Question in minutes" } })<br />
+
+                            <span id="clickmoreoptionlink" class="text-info" style="display:none;"><a id="add">Click to add more options </a> <span class="text-danger">[Max Limit 5]</span></span><br />
+                            <div id="MoreTextBox"></div><br />
+                            <div id="dropdownOptions" style="display:none;">
+                                @Html.Label("Select Option type below:")<br />
+                                @Html.DropDownList("CorrectAnswer", new List<SelectListItem> { new SelectListItem { Text = "Option 1", Value = "1" }, new SelectListItem { Text = "Option 2", Value = "2" }, new SelectListItem { Text = "Option 3", Value = "3" }, new SelectListItem { Text = "Option 4", Value = "4" }, new SelectListItem { Text = "Option 5", Value = "5" } }, "Choose Correct Answer", new { @class = "form-control", id = "CorrectAnswer" })
+                            </div><br />
+                            <button type="submit" style="width:100%;" id="Enter" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-ok"></span> Submit</button>
+                            <br />
+                            <div id="snackbar">@ViewData["MSG"]</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            if (document.getElementById("snackbar").innerHTML != "") {
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+
+        $(document).ready(function () {
+            $("#option").change(function () {
+                if ($("#option").val() == 1 || $("#option").val() == 2) {
+                    $("#dropdownOptions").show();
+                    $("#clickmoreoptionlink").show();
+                }
+                else {
+                    $("#dropdownOptions").hide();
+                    $("#clickmoreoptionlink").hide();
+                }
+            })
+        });
+
+        $(document).ready(function () {
+            var i = 1;
+            $("#add").click(function () {
+                var input = document.createElement("TextArea");
+                input.id = "Option" + i;
+                input.placeholder = "Please Enter Option " + i;
+                i = i + 1;
+                input.name = input.id;
+                document.getElementById("MoreTextBox").appendChild(input);
+                document.getElementById("MoreTextBox").appendChild("<br />");
+                document.getElementById("snackbar").innerHTML = "Option Box Added!!.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            })
+        });
+
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: "/Courses/GetCourse",
+                dataType: 'json',
+                success: function (data) {
+                    if ($("#Course").empty()) {
+                        var value = "0";
+                        var text = "Select Course";
+                        $("#Course").append('<option value="' + value + '">' +
+                             text + '</option>');
+                        $.each(data, function (i, data) {
+                            $("#Course").append('<option value="' + data.CourseId + '">' +
+                             data.CourseName + '</option>');
+                        });
+                    }
+                },
+                error: function (ex) {
+                    document.getElementById('snackbar').innerHTML = "Error.Try Again!!!.";
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            });
+            return false;
+        });
+
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: "/Courses/GetOptionTypes",
+                dataType: 'json',
+                success: function (data) {
+                    if ($("#option").empty()) {
+                        var value = "0";
+                        var text = "Select Option Type";
+                        $("#option").append('<option value="' + value + '">' +
+                             text + '</option>');
+                        $.each(data, function (i, data) {
+                            $("#option").append('<option value="' + data.TypeId + '">' +
+                             data.TypeName + '</option>');
+                        });
+                    }
+                },
+                error: function (ex) {
+                    document.getElementById('snackbar').innerHTML = "Error.Try Again!!!.";
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            });
+            return false;
+        });
+
+
+        $(document).ready(function () {
+            $("#Course").change(function () {
+                $("#paper").empty();
+                if ($("#Course").val() != 0) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "/Courses/GetPaper",
+                        dataType: 'json',
+                        data: { CourseId: $("#Course").val() },
+                        success: function (data) {
+                            $.each(data, function (i, data) {
+                                $("#paper").append('<option value="' + data.PaperId + '">' +
+                                 data.PaperName + '</option>');
+                            });
+                        },
+                        error: function (ex) {
+                            document.getElementById('snackbar').innerHTML = "Error.Try Again!!!.";
+                            var x = document.getElementById("snackbar");
+                            x.className = "show";
+                            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                        }
+                    });
+                }
+                else {
+                    var value = "0";
+                    var text = "Select Paper";
+                    $("#paper").append('<option value="' + value + '">' +
+                         text + '</option>');
+                }
+            })
+        });
+
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: "/Courses/GetLevels",
+                dataType: 'json',
+                success: function (data) {
+                    if ($("#level").empty()) {
+                        $.each(data, function (i, data) {
+                            $("#level").append('<option value="' + data.Level + '">' +
+                             data.LevelName + '</option>');
+                        });
+                    }
+                },
+                error: function (ex) {
+                    document.getElementById('snackbar').innerHTML = "Error.Try Again!!!.";
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            });
+            return false;
+        });
+    </script>
+}
+

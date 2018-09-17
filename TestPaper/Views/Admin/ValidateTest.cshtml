@@ -1,0 +1,137 @@
+﻿@model IEnumerable<ProjectX.Models.ValidateTest>
+
+@{
+    ViewBag.Title = "View Test Scores";
+    var testId = Request.Params["testId"];
+}
+
+<div class="page">
+    @{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+    <div class="container-fluid main-container">
+        <div class="col-md-2 sidebar">
+            @{ Html.RenderPartial("~/Views/Admin/_LeftAdminPanel.cshtml");}
+        </div>
+        <div class="col-md-10 content">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Edit Users
+                </div>
+                <div class="panel-body" id="GetAnswers">
+                    <h2>List of Test Taken</h2>
+                    <p>Please click on action item to view anwsers:</p>
+                    <table id="tblUsers" class="table table-striped table-bordered" style="width:100%">
+                        <tr>
+                            <th style="width:100px">QId</th>
+                            <th style="width:100px">Question</th>
+                            <th style="width:150px">Answer</th>
+                            <th style="width:150px">score</th>
+                            <th style="width:150px">Actions</th>
+                        </tr>
+                        @foreach (var list in Model)
+                        {
+                            <tr>
+                                <td class="QId">
+                                    <span style="display:none;" id="userId">@list.UserId</span>
+                                    <span id="QId">@list.QId</span>
+                                </td>
+                                <td class="Question">
+                                    <span>@list.Question</span>
+                                </td>
+                                <td class="MultiLineAnswer">
+                                    <span>@list.MultiLineAnswer</span>
+                                </td>
+                                <td class="score">
+                                    <input type="text" id="score" class="form-control" value="@list.Score">
+                                </td>
+                                <td>
+                                    <a class="update" href="javascript:;">Update Score</a>
+                                </td>
+                            </tr>
+                        }
+                    </table><br />
+                    <span id="TestId" style="display:none;">@testId</span>
+                    <button class="btn btn-primary" id="submitscore">Submit Score</button>
+                </div>
+                <div id="snackbar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("body").on("click", "#tblUsers .update", function () {
+        var row = $(this).closest("tr");
+        var score = {};
+        score.QId = row.find(".QId").find("#QId").html();
+        score.TestId = $("#TestId").html();
+        score.userId = row.find(".QId").find("#userId").html();
+        score.Score = row.find(".score").find("input").val();
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Validate",
+            data: '{score:' + JSON.stringify(score) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                } else {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            },
+            error: function (response) {
+                document.getElementById('snackbar').innerHTML = "Error!!.Try Again Later or Contact Admininstrator!!!.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+    });
+
+    $("body").on("click", "#tblUsers .review", function () {
+        var row = $(this).closest("tr");
+        var testId = row.find(".Id").find("#testid").html();
+        alert(testId);
+        window.location.href = "ValidateTest?testId=" + testId;
+    });
+
+    $(document).ready(function () {
+        $("#submitscore").click(function () {
+            if (confirm("Do you want to submit the score?")) {
+                var testid = $("#TestId").html();
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/SubmitScore",
+                    data: "{testId:'" + testid + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.success) {
+                            document.getElementById('snackbar').innerHTML = response.responseText;
+                            var x = document.getElementById("snackbar");
+                            x.className = "show";
+                            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                        } else {
+                            document.getElementById('snackbar').innerHTML = response.responseText;
+                            var x = document.getElementById("snackbar");
+                            x.className = "show";
+                            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                        }
+                    },
+                    error: function (response) {
+                        document.getElementById('snackbar').innerHTML = "Error!!.Try Again Later or Contact Admininstrator!!!.";
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                    }
+                });
+            }
+        });
+    });
+</script>
+

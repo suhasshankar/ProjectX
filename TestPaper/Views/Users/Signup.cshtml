@@ -1,0 +1,49 @@
+﻿@model ProjectX.Models.Users
+
+@{
+    ViewBag.Title = "Registration";
+}
+
+<div class="container" style="padding-top:5%;">
+    <div class="row" id="pwd-container">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            @using (Html.BeginForm("Signup", "Users", FormMethod.Post))
+            {
+                @Html.ValidationSummary(true)
+                <h1 class="text-info">Sign Up</h1>
+                <p class="text-primary">Please fill in this form to create an account.</p>
+                    <hr>
+
+                    <label for="username"><b>User Name</b></label>
+                    @Html.EditorFor(c => c.UserName, new { htmlAttributes = new { @class = "form-control", @placeholder = "User Name", @style = "width:100%;" } })
+                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })<br />
+
+                    <label for="email"><b>Email</b></label>
+                    @Html.EditorFor(c => c.EmailId, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email Id", @style = "width:100%;" } })
+                    @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })<br />
+
+                    <label for="psw"><b>Password</b></label>
+                    @Html.EditorFor(c => c.Password, new { htmlAttributes = new { @class = "form-control", @placeholder = "Password", @style = "width:100%;" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })<br />
+
+                    <label for="psw-repeat"><b>Repeat Password</b></label>
+                    @Html.EditorFor(c => c.Password, new { htmlAttributes = new { @class = "form-control", @placeholder = "Password", @style = "width:100%;" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })<br />
+
+                    <label>
+                        <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+                    </label>
+
+                    <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+                    <div class="clearfix">
+                        <button type="submit" style="width:100%;" class="btn btn-info btn-lg glyphicon glyphicon-user" > SignUp</button><br /><br />
+                        <button type="button" style="width:100%;" class="btn btn-danger glyphicon btn-lg glyphicon-remove-circle"> Cancel</button>                
+                    </div>
+
+            }
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+</div>

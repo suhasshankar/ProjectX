@@ -1,0 +1,212 @@
+﻿@model IEnumerable<ProjectX.Models.Users>
+
+@{
+    ViewBag.Title = "Assign Test";
+    int count = 0;
+    int typeCounter = 0;
+}
+
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Admin/_LeftAdminPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Enable or Disable Users
+            </div>
+            <div class="panel-body">
+                <h2>Assign Test</h2>
+                <p>Below is the list of users to assign test:</p>
+                <table id="tblUsers" class="table table-striped table-bordered" style="width:100%">
+                    <tr>
+                        <th style="width:100px">ID</th>
+                        <th style="width:150px">User Name</th>
+                        <th style="width:150px">Email Id</th>
+                        <th style="width:150px">Assign Course</th>
+                        <th style="width:150px">Assign Test Type</th>
+                        <th style="width:150px">Actions</th>
+                    </tr>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="Id">
+                                <span>@user.Id</span>
+                            </td>
+                            <td class="username">
+                                <span>@user.UserName</span>
+                            </td>
+                            <td class="emailid">
+                                <span>@user.EmailId</span>
+                            </td>
+                            <td class="assign">
+                                @if (@user.courses != null)
+                                {
+                                    foreach (var item in @user.courses)
+                                    {
+                                        if (item.Text != null)
+                                        {
+                                            if (item.Selected)
+                                            {
+                                                <input type="checkbox" name="@string.Format("{0}{1}", "checkbox", count)" value="@item.Value" checked />@item.Text<br />
+                                            }
+                                            if (!item.Selected)
+                                            {
+                                                <input type="checkbox" name="@string.Format("{0}{1}", "checkbox", count)" style="float:left;" value="@item.Value" />@item.Text<br />
+                                            }
+                                        }
+                                        count++;
+                                    }
+                                    count = 0;
+                                }
+                            </td>
+                            <td class="type">
+                                @if (@user.TestType.Count > typeCounter)
+                                {
+                                    foreach (var item in @user.courses)
+                                    {
+                                        if (@user.TestType[typeCounter] == 0)
+                                        {
+                                            <div id="@string.Format("{0}{1}", "type", typeCounter)" style="display:none;">
+                                                @Html.DropDownList("type", new List<SelectListItem> { new SelectListItem { Text = "Only Options", Value = "1" }, new SelectListItem { Text = "Only Comprehensive", Value = "2" }, new SelectListItem { Text = "Both Options and Comprehensive", Value = "3" } }, "Choose Type", new { @class = "form-control", @style = "width:100%", id = "type" + typeCounter })
+                                            </div>
+                                        }
+                                        if (@user.TestType[typeCounter] == 1)
+                                        {
+                                            <div id="@string.Format("{0}{1}", "type", typeCounter)" style="display:none;">
+                                                @Html.DropDownList("type", new List<SelectListItem> { new SelectListItem { Text = "Only Options", Value = "1", Selected = true }, new SelectListItem { Text = "Only Comprehensive", Value = "2" }, new SelectListItem { Text = "Both Options and Comprehensive", Value = "3" } }, "Choose Type", new { @class = "form-control", @style = "width:100%", id = "type" + typeCounter })
+                                            </div>
+                                        }
+                                        if (@user.TestType[typeCounter] == 2)
+                                        {
+                                            <div id="@string.Format("{0}{1}", "type", typeCounter)" style="display:none;">
+                                                @Html.DropDownList("type", new List<SelectListItem> { new SelectListItem { Text = "Only Options", Value = "1" }, new SelectListItem { Text = "Only Comprehensive", Value = "2", Selected = true }, new SelectListItem { Text = "Both Options and Comprehensive", Value = "3" } }, "Choose Type", new { @class = "form-control", @style = "width:100%", id = "type" + typeCounter })
+                                            </div>
+                                        }
+                                        if (@user.TestType[typeCounter] == 3)
+                                        {
+                                            <div id="@string.Format("{0}{1}", "type", typeCounter)" style="display:none;">
+                                                @Html.DropDownList("type", new List<SelectListItem> { new SelectListItem { Text = "Only Options", Value = "1" }, new SelectListItem { Text = "Only Comprehensive", Value = "2" }, new SelectListItem { Text = "Both Options and Comprehensive", Value = "3", Selected = true } }, "Choose Type", new { @class = "form-control", @style = "width:100%", id = "type" + typeCounter })
+                                            </div>
+                                        }
+                                        typeCounter++;
+                                    }
+                                    typeCounter = 0;
+                                }
+                            </td>
+                            <td>
+                                <a class="Update" href="javascript:;">Update</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <div id="snackbar"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("body").on("click", "#tblUsers .assign", function () {
+            var row = $(this).closest("tr");
+            var counter = row.find(".assign").find('input:checkbox').length;
+            var total = parseInt(counter);
+            for (var i = 0; i < total; i++) {
+                if (row.find(".assign").find('input[name=checkbox' + i + ']:checked').val() != undefined) {
+                    row.find(".type").find("#type" + i).show();
+                }
+                else
+                {
+                    row.find(".type").find("#type" + i).hide();
+                }
+            }
+        });
+    });
+
+    $(window).on('load', function () {
+        $('#tblUsers tr').each(function (i, row)
+        {
+            var row = $(row);
+            var counter = row.find(".assign").find('input:checkbox').length;
+            var total = parseInt(counter);
+            for (var i = 0; i < total; i++) {
+                if (row.find(".assign").find('input[name=checkbox' + i + ']:checked').val() != undefined) {
+                    row.find(".type").find("#type" + i).show();
+                }
+                else {
+                    row.find(".type").find("#type" + i).hide();
+                }
+            }
+        });
+    });
+
+    $(function () {
+        //Remove the dummy row if data present.
+        if ($("#tblUsers tr").length > 2) {
+            $("#tblUsers tr:eq(1)").remove();
+        } else {
+            var row = $("#tblUsers tr:last-child");
+            row.find("span").html('&nbsp;');
+        }
+    });
+
+    $("body").on("click", "#tblUsers .Update", function () {
+
+        var row = $(this).closest("tr");
+        var counter = row.find(".assign").find('input:checkbox').length;
+
+        var result = [], total = parseInt(counter), CourseList = {}, j = 1;
+        for (var i = 0; i < total; i++) {   
+            if (row.find(".assign").find('input[name=checkbox' + i + ']:checked').val() != undefined) {
+                CourseList = {
+                    UserId: row.find(".Id").find("span").html(),
+                    CourseId: $('input[name=checkbox' + i + ']:checked').val(),
+                    TestType: row.find(".type").find("#type" + i).find("#type" + i).val()
+                }
+                result.push(CourseList);
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/Admin/AssignTest",
+            data: { result },
+            success: function (response) {
+                if (response.success) {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                } else {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            },
+            error: function (response) {
+                document.getElementById('snackbar').innerHTML = "Error!!.Try Again Later or Contact Admininstrator!!!.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+        setTimeout(function () { location.reload(); }, 5000);
+    });
+
+    $(function () {
+        $('.navbar-toggle-sidebar').click(function () {
+            $('.navbar-nav').toggleClass('slide-in');
+            $('.side-body').toggleClass('body-slide-in');
+            $('#search').removeClass('in').addClass('collapse').slideUp(200);
+        });
+
+        $('#search-trigger').click(function () {
+            $('.navbar-nav').removeClass('slide-in');
+            $('.side-body').removeClass('body-slide-in');
+            $('.search-input').focus();
+        });
+    });
+
+</script>

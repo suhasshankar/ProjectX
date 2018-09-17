@@ -1,0 +1,67 @@
+﻿@model ProjectX.Models.Scores
+@{
+    Layout = null;
+}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href="~/Styles/navbar.css" rel="stylesheet" />
+<link href="~/Styles/snackbar.css" rel="stylesheet" />
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Student/_LeftUserPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Result
+            </div>
+            <div class="panel-body">
+                <h2>Score Board</h2>
+                <p>Below is the score card:</p>
+                @Html.LabelFor(m => m.CourseName)<br />
+                @Html.DisplayFor(m => m.CourseName)<br />
+
+                @Html.LabelFor(m => m.paperName)<br />
+                @Html.DisplayFor(m => m.paperName)<br />
+
+                @Html.LabelFor(m => m.LevelName)<br />
+                @Html.DisplayFor(m => m.LevelName)<br />
+
+                @Html.LabelFor(m => m.userName)<br />
+                @Html.DisplayFor(m => m.userName)<br />
+
+                @Html.LabelFor(m => m.Score)<br />
+                @if (Model.Score == -1)
+                {
+                    <span class="text-danger">@ViewData["MSG"]</span><br />
+                }
+                @if (Model.Score != -1)
+                {
+                    @Html.DisplayFor(m => m.Score)<br />
+                    <b>You have Successfully submitted exam. Please click below to get result.</b><br /><br />
+                }<br />            
+                <button id="report">Generate Report Card</button>
+                <span id="testid" style="display:none">@ViewData["testId"]</span>
+                <div class="ReadBlock">
+                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("body").on("click", "#report", function () {
+        var Id = $("#testid").html();
+        window.location.href = "/Report/ReportGenerator?Id=" + Id;
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/Report/ReportGenerator",
+        //    data: 'Id=' + Id,
+        //    dataType: "json",
+        //    success: function (response) {
+        //    }
+        //});
+    });
+</script>

@@ -1,0 +1,45 @@
+﻿@model IEnumerable<ProjectX.Models.Users>
+
+@{
+    ViewBag.Title = "Edit Users";
+}
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Admin/_LeftAdminPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                DashBoard
+            </div>
+            <div class="panel-body">
+                <div>
+                    <img src="~/TempCharts/AdminScoresChart.png" />
+                </div>
+            </div>
+            <div id="snackbar"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(window).load(function () {
+        $.ajax({
+            type: 'GET',
+            url: "/Report/GenerateStats",
+            dataType: 'json',
+            success: function (data) {
+                document.getElementById('snackbar').innerHTML = "Dashboard is ready to use.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            },
+            error: function (ex) {
+                document.getElementById('snackbar').innerHTML = "Failed to load charts stats!!.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+    });
+</script>

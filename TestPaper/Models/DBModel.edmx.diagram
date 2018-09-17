@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a0a683af450945f6a0b3651e302ffafa" Name="Diagram1">
+        <EntityTypeShape EntityType="ProjectXModel.AllocateCourse" Width="1.5" PointX="0.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Answers" Width="1.5" PointX="7.5" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Courses" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.ExamType" Width="1.5" PointX="2.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Levels" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Options" Width="1.5" PointX="7.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.OptionTypes" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Papers" Width="1.5" PointX="3" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Questions" Width="1.5" PointX="5.25" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.ReportCard" Width="1.5" PointX="9.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Roles" Width="1.5" PointX="5.75" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Scores" Width="1.5" PointX="9.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.StudentTestLog" Width="1.5" PointX="10.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectXModel.Users" Width="1.5" PointX="8" PointY="8.875" IsExpanded="true" />
+        <AssociationConnector Association="ProjectXModel.FK_Table_Questions" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Papers_Courses" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Questions_Courses" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Questions_Levels" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Options_Questions" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK1_Options_Questions" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK2_Options_Questions" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Questions_OptionTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Questions_Papers" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectXModel.FK_Users_Roles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

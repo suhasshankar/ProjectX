@@ -1,0 +1,274 @@
+﻿@model IEnumerable<ProjectX.Models.Users>
+
+@{
+    ViewBag.Title = "Edit Users";
+}
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Admin/_LeftAdminPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Edit Users
+            </div>
+            <div class="panel-body">
+                <h2>List of Users</h2>
+                <p>Edit or Update or Delete users from below table:</p>
+                <table id="tblUsers" class="table table-striped table-bordered" style="width:100%">
+                    <tr>
+                        <th style="width:100px">ID</th>
+                        <th style="width:150px">User Name</th>
+                        <th style="width:150px">Email ID</th>
+                        <th style="width:150px">Role</th>
+                        <th style="width:150px">Actions</th>
+                    </tr>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="Id">
+                                <span>@user.Id</span>
+                            </td>
+                            <td class="username">
+                                <span>@user.UserName</span>
+                                <input class="form-control" type="text" value="@user.UserName" style="display:none" />
+                            </td>
+                            <td class="emailid">
+                                <span>@user.EmailId</span>
+                                <input class="form-control" type="text" value="@user.EmailId" style="display:none" />
+                            </td>
+                            <td class="role">
+                                @if (@user.RoleId == 1)
+                                {
+                                    <span>Student</span>
+                                }
+                                @if (@user.RoleId == 2)
+                                {
+                                    <span>Admin</span>
+                                }
+                                <span id="roleblock" style="display:none">
+                                    @Html.DropDownList("role", new SelectList(string.Empty, "Value", "Text"), "Select Role", new { @class = "form-control", id = "selectedrole" })<br />
+                                </span>
+                            </td>
+                            <td>
+                                <a class="Edit" href="javascript:;">Edit</a>
+                                <a class="Update" href="javascript:;" style="display:none">Update</a>
+                                <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+                                <a class="Delete" href="javascript:;">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <div id="snackbar">@ViewData["MSG"]</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        //Remove the dummy row if data present.
+        if ($("#tblUsers tr").length > 2) {
+            $("#tblUsers tr:eq(1)").remove();
+        } else {
+            var row = $("#tblUsers tr:last-child");
+            row.find(".Edit").hide();
+            row.find(".Delete").hide();
+            row.find("span").html('&nbsp;');
+        }
+    });
+
+    function AppendRow(row, Id, username, pwd, emailid, status, role) {
+        //Bind CustomerId.
+        $(".Id", row).find("span").html(customerId);
+
+        //Bind username.
+        $(".username", row).find("span").html(username);
+        $(".username", row).find("input").val(username);
+
+        //Bind pwd.
+        $(".pwd", row).find("span").html(pwd);
+        $(".pwd", row).find("input").val(pwd);
+
+        //Bind emailid.
+        $(".emailid", row).find("span").html(emailid);
+        $(".emailid", row).find("input").val(emailid);
+
+        //Bind status.
+        $(".status", row).find("span").html(status);
+        $(".status", row).find("input").val(status);
+
+        //Bind role.
+        $(".role", row).find("span").html(role);
+        $(".role", row).find("input").val(role);
+
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        $("#tblUsers").append(row);
+    };
+
+    //Edit
+    $("body").on("click", "#tblUsers .Edit", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                $(this).find("input").show();
+                $(this).find("span").hide();
+            }
+        });
+        row.find("span").hide();
+        row.find("#roleblock").show();
+        row.find("#statusblock").show();
+        row.find(".Update").show();
+        row.find(".Cancel").show();
+        row.find(".Delete").hide();
+        row.find("#selectedrole").empty();
+        $.ajax({
+            type: 'GET',
+            url: "/Courses/GetRoles",
+            success: function (data) {
+                $.each(data, function (i, data) {
+                    row.find("#selectedrole").append('<option value="' + data.RoleId + '">' +
+                     data.RoleName + '</option>');
+                });
+            },
+            error: function (ex) {
+                document.getElementById('snackbar').innerHTML = "Failed to load Roles!!.Please Refresh Page.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+        $(this).hide();
+    });
+
+    //Update
+    $("body").on("click", "#tblUsers .Update", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                var span = $(this).find("span");
+                var input = $(this).find("input");
+                span.html(input.val());
+                span.show();
+                input.hide();
+            }
+        });
+        row.find("span").show();
+        row.find("#roleblock").hide();
+        row.find("#statusblock").hide();
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        row.find(".Cancel").hide();
+        $(this).hide();
+
+        var user = {};
+        user.Id = row.find(".Id").find("span").html();
+        user.UserName = row.find(".username").find("span").html();
+        user.EmailId = row.find(".emailid").find("span").html();
+        user.RoleId = row.find(".role").find("#selectedrole").val();
+        user.Status = row.find(".status").find("#selectedstatus").val();
+        $.ajax({
+            type: "POST",
+            url: "/Users/UpdateUser",
+            data: '{user:' + JSON.stringify(user) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                } else {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            },
+            error: function (response) {
+                document.getElementById('snackbar').innerHTML = "Error!!.Try Again Later or Contact Admininstrator!!!.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+        setTimeout(function () { location.reload(); }, 5000);
+    });
+
+    //Cancel
+    $("body").on("click", "#tblUsers .Cancel", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                var span = $(this).find("span");
+                var input = $(this).find("input");
+                input.val(span.html());
+                span.show();
+                input.hide();
+            }
+        });
+        row.find("span").show();
+        row.find("#roleblock").hide();
+        row.find("#statusblock").hide();
+        row.find("#role").show();
+        row.find("#status").show();
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        row.find(".Update").hide();
+        $(this).hide();
+    });
+
+    //Delete
+    $("body").on("click", "#tblUsers .Delete", function () {
+        if (confirm("Do you want to delete this User?")) {
+            var row = $(this).closest("tr");
+            var id = row.find("span").html();
+            $.ajax({
+                type: "POST",
+                url: "/Users/DeleteUser",
+                data: '{Id: ' + id + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if ($("#tblUsers tr").length > 2) {
+                        row.remove();
+                    } else {
+                        row.find(".Edit").hide();
+                        row.find(".Delete").hide();
+                        row.find("span").html('&nbsp;');
+                    }
+                    if (response.success) {
+                        document.getElementById('snackbar').innerHTML = response.responseText;
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                    } else {
+                        document.getElementById('snackbar').innerHTML = response.responseText;
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                    }
+                }
+            });
+        }
+    });
+
+    $(function () {
+        $('.navbar-toggle-sidebar').click(function () {
+            $('.navbar-nav').toggleClass('slide-in');
+            $('.side-body').toggleClass('body-slide-in');
+            $('#search').removeClass('in').addClass('collapse').slideUp(200);
+        });
+
+        $('#search-trigger').click(function () {
+            $('.navbar-nav').removeClass('slide-in');
+            $('.side-body').removeClass('body-slide-in');
+            $('.search-input').focus();
+        });
+    });
+</script>
+

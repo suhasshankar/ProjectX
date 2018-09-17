@@ -1,0 +1,95 @@
+﻿@model ProjectX.Models.Courses
+@{
+    ViewBag.Title = "Select";
+}
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Student/_LeftUserPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                List Of Course and Technologies
+            </div>
+            <div class="panel-body">
+                <h2>Select Paper</h2>
+                <p>Below are some of courses and technologies:</p>
+                <div class="BlockQ" style="border: 1px solid #bdbdbd; width: inherit; border-radius: 4px; margin-top: 40px; background-color: #f2f2f2; padding:5%;">
+                    @using (Html.BeginForm("QuestionIterator", "Student", FormMethod.Post))
+                    {
+                        <label for="course"><b>Select Course</b></label>
+                        @Html.DropDownListFor(model => model.CourseId, Model.ListOfCourses, "Select Course", new { @class = "form-control", id = "course" })<br />
+                        <label for="paper"><b>Select Paper</b></label>
+                        @Html.DropDownList("paperId", new SelectList(string.Empty, "Value", "Text"), "select Paper", new { @class = "form-control", id = "paper" })<br />
+                        <label for="level"><b>Select Level</b></label>
+                        @Html.DropDownList("levelId", new SelectList(string.Empty, "Value", "Text"), "select Level", new { @class = "form-control", id = "level" })<br />
+                        <button type="submit" id="Enter" class="btn btn-success btn-lg" style="width:100%;"><span class="glyphicon glyphicon-ok"></span> Next</button>
+                    }
+                </div>
+                <div id="snackbar">@ViewData["MSG"]</div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            if (document.getElementById("snackbar").innerHTML != "") {
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+
+
+        $(document).ready(function () {
+            $("#course").change(function () {
+                $("#paper").empty();
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetPaper")',
+                    dataType: 'json',
+                    data: { CourseId: $("#course").val() },
+                    success: function (data) {
+                        $.each(data, function (i, data) {
+                            $("#paper").append('<option value="' + data.PaperId + '">' +
+                             data.PaperName + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        document.getElementById('snackbar').innerHTML = response.responseText;
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                    }
+                });
+                return false;
+            })
+        });
+
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetLevels")',
+                dataType: 'json',
+                success: function (data) {
+                    if ($("#level").empty()) {
+                        $.each(data, function (i, data) {
+                            $("#level").append('<option value="' + data.Level + '">' +
+                             data.LevelName + '</option>');
+                        });
+                    }
+                },
+                error: function (ex) {
+                    document.getElementById('snackbar').innerHTML = response.responseText;
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+            });
+            return false;
+        });
+    </script>
+}

@@ -1,0 +1,219 @@
+﻿@model List<ProjectX.Models.GetQuestions_Result>
+
+@{
+    int count = 1, countR = 0;
+}
+
+@{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+<div class="container-fluid main-container">
+    <div class="col-md-2 sidebar">
+        @{ Html.RenderPartial("~/Views/Student/_LeftUserPanel.cshtml");}
+    </div>
+    <div class="col-md-10 content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+            </div>
+            <div class="panel-body">
+                @{ Html.RenderPartial("~/Views/Student/_ExamInfo.cshtml");}
+            </div>
+            <div class="panel-body">
+                <h4 style="margin-top: 1%;"> <span class="label label-info">Questions :</span> </h4>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var question in Model)
+                    {
+                        <span id="timer" style="display:none;">@question.Duration</span>
+                        <div class="BlockQ" style="border: 1px solid #bdbdbd; width: inherit; border-radius: 4px; margin-top: 40px; background-color: #f2f2f2; padding: inherit;">
+                            <div id="showTimer"><p>Time Remaining <span id="time">min:sec</span> Minutes</p></div>
+                            <div class="Question" style="padding: 2%;">
+                                <span class="label label-warning"> @string.Format("{0}{1}.", "Q", "")</span>
+                                <span id="@string.Format("{0}{1}", "QId", count)" style="display:none;">@question.QId</span>
+                                <p style="display: inline; padding: 2%;" id="@string.Format("{0}{1}", "Question", count)">@question.Question</p>
+                            </div>
+
+                            <div class="Choices" style="margin-left: 8%;">
+
+                                @if (question.OptionType == 1)
+                                {
+                                    foreach (var choice in question.options)
+                                    {
+                                        <label class="radio-inline">
+                                            <input type="radio" name="@string.Format("{0}{1}", "radio",count)" id="@string.Format("{0}{1}", "radio", countR)" value="@choice.choiceId" style="margin-left: -16px;"> @choice.choiceText
+                                        </label><br />
+                                        countR++;
+                                    }
+                                }
+                                @if (question.OptionType == 2)
+                                {
+                                    foreach (var choice in question.options)
+                                    {
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" name="@string.Format("{0}{1}", "checkbox",count)" id="@string.Format("{0}{1}", "checkbox", countR)" value="@choice.choiceId" style="margin-left: -16px;"> @choice.choiceText
+                                        </label><br />
+                                        countR++;
+                                    }
+                                }
+                                @if (question.OptionType == 3)
+                                {
+                                    <label class="textbox">
+                                        <textarea type="text" cols="40" rows="5" name="text" id="text" value="" style="margin-left: -16px;"> </textarea>
+                                    </label><br />
+                                }
+                            </div>
+                        </div>
+                        count++;
+                    }
+                    <div id="snackbar"></div>
+                    <span id="countQuections" style="display:none;">@count</span>
+                    <button type="button" id="submit" class="btn btn-default" style="margin-top: 10px;"><span class="glyphicon glyphicon-ok-sign"></span> Submit</button>
+                    <button type="button" id="next" class="btn btn-default" style="margin-top: 10px;"><span class="glyphicon glyphicon-chevron-right"></span> Next</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(window).on('load', function () {
+        $("#next").hide();
+        var min = $("#timer").html();
+        start(min);
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10)
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+
+                if (minutes == 0 & seconds == 0) {
+                    document.getElementById("submit").disabled = true;
+                    $("#showTimer").hide();
+                    $("#next").show();
+                    if ($('input[name=radio' + 1 + ']:checked').length && $('input[name=radio' + 1 + ']:checked').val().length) {
+                        var SelectedOption = $('input[name=radio' + 1 + ']:checked').val();
+                    }
+                    if ($('#text').length && $('#text').val().length) {
+                        var Comprehensive = $('#text').val();
+                    }
+                    if ($('input[name=checkbox' + 1 + ']:checked').length && $('input[name=checkbox' + 1 + ']:checked').val().length) {
+                        var SelectedOption = $('input[name=checkbox' + 1 + ']:checked').val();
+                    }
+                    var QId = $('#QId' + 1).text();
+                    var duration = $('#time').html();
+                    var result = {};
+                    result.QId = QId;
+                    result.SelectedOption = SelectedOption;
+                    result.Comprehensive = Comprehensive;
+                    result.duration = duration;
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("CaptureResult", "Student")',
+                        data: result,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#next").show();
+                                document.getElementById('snackbar').innerHTML = response.responseText;
+                                var x = document.getElementById("snackbar");
+                                x.className = "show";
+                                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                            } else {
+                                document.getElementById('snackbar').innerHTML = response.responseText;
+                                var x = document.getElementById("snackbar");
+                                x.className = "show";
+                                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                            }
+                        },
+                        error: function (response) {
+                            document.getElementById('snackbar').innerHTML = "Error!!.Try Again Later or Contact Admininstrator!!!.";
+                            var x = document.getElementById("snackbar");
+                            x.className = "show";
+                            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                        }
+                    });
+                }
+            }, 1000);
+        }
+
+        function start(min) {
+            var min;
+            var sec = 0;
+            document.getElementById("time").innerHTML = min + " : " + sec;
+            var minutes = 60 * min,
+                display = document.querySelector('#time');
+            startTimer(minutes, display);
+        };
+    });
+
+    $(document).ready(function () {
+
+        $('#submit').on('click', function () {
+            if ($('input[name=radio' + 1 + ']:checked').length && $('input[name=radio' + 1 + ']:checked').val().length) {
+                var SelectedOption = $('input[name=radio' + 1 + ']:checked').val();
+            }
+            if ($('#text').length && $('#text').val().length) {
+                var Comprehensive = $('#text').val();
+            }
+            if ($('input[name=checkbox' + 1 + ']:checked').length && $('input[name=checkbox' + 1 + ']:checked').val().length) {
+                var SelectedOption = $('input[name=checkbox' + 1 + ']:checked').val();
+            }
+            var QId = $('#QId' + 1).text();
+            var duration = $('#time').html();
+            var result = {};
+            result.QId = QId;
+            result.SelectedOption = SelectedOption;
+            result.Comprehensive = Comprehensive;
+            result.duration = duration;
+            if (SelectedOption != undefined || Comprehensive!=null) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("CaptureResult", "Student")',
+                    data: result,
+                    success: function (response) {
+                        if (response.success) {
+                            $("#next").show();
+                            document.getElementById('snackbar').innerHTML = response.responseText;
+                            var x = document.getElementById("snackbar");
+                            x.className = "show";
+                            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                        } else {
+                            document.getElementById('snackbar').innerHTML = response.responseText;
+                            var x = document.getElementById("snackbar");
+                            x.className = "show";
+                            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                        }
+                    },
+                    error: function (response) {
+                        document.getElementById('snackbar').innerHTML = "Error!!.Try Again Later or Contact Admininstrator!!!.";
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                    }
+                });
+            }
+            else
+            {
+                document.getElementById('snackbar').innerHTML = "Please Select option.";
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $('#next').click(function () {
+            location.reload();
+        });
+    });
+
+</script>

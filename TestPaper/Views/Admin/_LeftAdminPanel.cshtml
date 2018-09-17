@@ -1,0 +1,63 @@
+﻿<div class="row">
+    <div class="absolute-wrapper"> </div>
+    <div class="side-menu">
+        <nav class="navbar navbar-default" role="navigation">
+            <!-- Main Menu -->
+            <div class="side-menu-container">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="@Url.Action("DashBoard", "Admin")"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a></li>
+                    <li><a href="@Url.Action("DashBoard", "Admin")"><span class="glyphicon glyphicon-stats"> Statistics</span></a></li>
+
+                    <!-- Dropdown-->
+                    <li class="panel panel-default" id="dropdown">
+                        <a data-toggle="collapse" href="#users">
+                            <span class="glyphicon glyphicon-user"></span>Users<span class="caret"></span>
+                        </a>
+                        <div id="users" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="@Url.Action("EditUsers", "Admin")">Edit Users</a></li>
+                                    <li><a href="@Url.Action("AddUsers", "Admin")">Add Users</a></li>
+                                    <li><a href="@Url.Action("ResetPwd", "Admin")">Reset Password</a></li>
+                                    <li><a href="@Url.Action("EnableDisableUsers", "Admin")">Enable or disable users</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Dropdown-->
+                    <li class="panel panel-default" id="dropdown">
+                        <a data-toggle="collapse" href="#course">
+                            <span class="glyphicon glyphicon-list-alt"></span> course<span class="caret"></span>
+                        </a>
+                        <div id="course" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="@Url.Action("EditCourse", "Admin")">Edit Courses</a></li>
+                                    <li><a href="@Url.Action("EditPaper", "Admin")">Edit Technologies</a></li>
+                                    <li><a href="@Url.Action("SetQuestions", "Admin")">Set Questions</a></li>
+                                    <li><a href="@Url.Action("AssignTest", "Admin")">Assign Tests to students</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="panel panel-default" id="dropdown">
+                        <a data-toggle="collapse" href="#report">
+                            <span class="glyphicon glyphicon-file"></span> Reports<span class="caret"></span>
+                        </a>
+                        <div id="report" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="@Url.Action("StudentWiseReport", "AdminReport")">Student Wise Report</a></li>
+                                    <li><a href="@Url.Action("ExamWiseReport", "AdminReport")">Exam wise Report</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a href="@Url.Action("EvaluateTests", "Admin")"><span class="glyphicon glyphicon-ok-sign"></span> Evaluate Test</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>

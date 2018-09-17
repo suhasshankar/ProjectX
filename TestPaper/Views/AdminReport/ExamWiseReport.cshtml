@@ -1,0 +1,33 @@
+﻿@model ProjectX.Models.Courses
+
+@{
+    ViewBag.Title = "Exam Wise Report";
+}
+<div class="page">
+    @{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+    <div class="container-fluid main-container">
+        <div class="col-md-2 sidebar">
+            @{ Html.RenderPartial("~/Views/Admin/_LeftAdminPanel.cshtml");}
+        </div>
+        <div class="col-md-10 content">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Exam Wise Report
+                </div>
+                <div class="panel-body" id="GetAnswers">
+                    <h2>Exam Wise Report Generator</h2>
+                    <p>Please click on action item to generate report:</p>
+                    @using (Html.BeginForm("AdminExamWiseReport", "Report", FormMethod.Get))
+                    {
+                        <label for="Id"><b>Select Course</b></label>
+                        @Html.DropDownListFor(model => model.CourseId, Model.ListOfCourses, "Select Course", new { @class = "form-control", name = "Id", id = "Id" })<br />
+                        @Html.DropDownList("type", new List<SelectListItem> { new SelectListItem { Text = "PDF", Value = "pdf", Selected = true }, new SelectListItem { Text = "EXCEL", Value = "xls" } }, "Select Type", new { @class = "form-control", id = "type" })
+                        <br /><button type="submit" id="Enter" class="btn btn-success btn-lg" style="width:100%;"><span class="glyphicon glyphicon-ok"></span> Generate</button>
+                    }
+                    <br />
+                </div>
+                <div id="snackbar"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+﻿@model IEnumerable<ProjectX.Models.courseSelectedTaken>
+
+@{
+    ViewBag.Title = "View Test Scores";
+}
+<div class="page">
+    @{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+    <div class="container-fluid main-container">
+        <div class="col-md-2 sidebar">
+            @{ Html.RenderPartial("~/Views/Student/_LeftUserPanel.cshtml");}
+        </div>
+        <div class="col-md-10 content">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Edit Users
+                </div>
+                <div class="panel-body" id="GetAnswers">
+                    <h2>List of Test Taken</h2>
+                    <p>Please click on action item to view anwsers:</p>
+                    <table id="tblUsers" class="table table-striped table-bordered" style="width:100%">
+                        <tr>
+                            <th style="width:100px">Test Id</th>
+                            <th style="width:100px">Course</th>
+                            <th style="width:150px">Paper</th>
+                            <th style="width:150px">Level</th>
+                            <th style="width:150px">Status</th>
+                            <th style="width:150px">Actions</th>
+                        </tr>
+                        @foreach (var list in Model)
+                        {
+                            <tr>
+                                <td class="TestId">
+                                    <span id="TestId">@list.TestId</span>
+                                </td>
+                                <td class="Course">
+                                    <span>@list.CourseName</span>
+                                </td>
+                                <td class="PaperName">
+                                    <span>@list.PaperName</span>
+                                </td>
+                                <td class="Level">
+                                    <span>@list.Level</span>
+                                </td>
+                                <td class="isCorrected">
+                                    @if (@list.isCorrected)
+                                    {
+                                        <span class="glyphicon glyphicon-ok-circle text-primary"> Corrected</span>
+                                    }
+                                    @if (!@list.isCorrected)
+                                    {
+                                        <span class="glyphicon glyphicon-remove-circle text-danger"><b> Pending</b></span>
+                                    }
+                                </td>
+                                <td class="action">
+                                    @if (@list.isCorrected)
+                                    {
+                                        <a class="Edit" href="javascript:;">Click to see Score and Answers</a>
+                                    }
+                                    @if (!@list.isCorrected)
+                                    {
+                                        <span class="text-danger">Review Under Progress. You will be notified soon!!.</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <div id="snackbar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("body").on("click", "#tblUsers .Edit", function () {
+        var row = $(this).closest("tr");
+        var Id = row.find(".TestId").find("#TestId").html();
+        window.location.href = "ShowAnswers?Id=" + Id;
+    });
+</script>
+

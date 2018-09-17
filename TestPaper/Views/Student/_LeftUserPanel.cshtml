@@ -1,0 +1,33 @@
+﻿<div class="row">
+    <div class="absolute-wrapper"> </div>
+    <div class="side-menu">
+        <nav class="navbar navbar-default" role="navigation">
+            <!-- Main Menu -->
+            <div class="side-menu-container">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="@Url.Action("DashBoard", "Student")"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a></li>
+                    <li><a href="@Url.Action("DashBoard", "Student")"><span class="glyphicon glyphicon-stats"> Statistics</span></a></li>
+
+                    <!-- Dropdown for users-->
+                    <li class="panel panel-default" id="dropdown">
+                        <a data-toggle="collapse" href="#users">
+                            <span class="glyphicon glyphicon-pencil"></span> Exams<span class="caret"></span>
+                        </a>
+                        <div id="users" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="@Url.Action("GetCourse", "Student")">Take Test</a></li>
+                                    <li><a href="@Url.Action("GetAnswers", "Student")">Show Answers</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li><a href="@Url.Action("GetScores", "Student")"><span class="glyphicon glyphicon-list-alt"> Results</span></a></li>
+                    <li><a href="@Url.Action("GenerateReport", "Report")"><span class="glyphicon glyphicon-file"> Reports</span></a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>

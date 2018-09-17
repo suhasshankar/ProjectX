@@ -1,0 +1,21 @@
+﻿@using ProjectX.Models
+@{
+    Users usercookie = Session["usercookie"] as Users;
+    Courses SelectedCourse = Session["SelectedCourse"] as Courses;
+    Papers SelectedPaper = Session["SelectedPaper"] as Papers;
+    Levels SelectedLevel = Session["SelectedLevel"] as Levels;
+}
+
+
+@if (usercookie != null)
+{
+    <div class="container">
+            <span class="text-info"> <b>User Name :</b> @usercookie.UserName</span><br />
+            <span class="text-info">Select Course: <b>@SelectedCourse.CourseName</b></span><br />
+            <span class="text-info">Select Paper: <b>@SelectedPaper.PaperName</b></span><br />
+            <span class="text-info">Select Level: <b>@SelectedLevel.LevelName</b></span><br />
+            <span class="text-info"> <b>Start Time :</b> @DateTime.Now</span><br /><br />
+            <span class="alert-danger">Note:Please Don't Refresh Page</span>
+    </div>
+}
+

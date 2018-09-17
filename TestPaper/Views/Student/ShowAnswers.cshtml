@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ProjectX.Models.ShowAnswersList>
+
+@{
+    ViewBag.Title = "Show Answers";
+}
+<div class="page">
+    @{ Html.RenderPartial("~/Views/Shared/_HorizontalNavBar.cshtml");}
+    <div class="container-fluid main-container">
+        <div class="col-md-2 sidebar">
+            @{ Html.RenderPartial("~/Views/Student/_LeftUserPanel.cshtml");}
+        </div>
+        <div class="col-md-10 content">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Answers List
+                </div>
+                <div class="panel-body">
+                    <h2>Answer List and Score</h2>
+                    <p>Please below Answer and scores :</p>
+                    <table id="tblUsers" class="table table-striped table-bordered" style="width:100%">
+                        <tr>
+                            <th style="width:100px">Questions</th>
+                            <th style="width:100px">Correct Option</th>
+                            <th style="width:150px">Selected Options</th>
+                            <th style="width:150px">Status</th>
+                            <th style="width:150px">Score</th>
+                        </tr>
+                        @foreach (var list in Model)
+                        {
+                            <tr>
+                                <td class="Question">
+                                    <span>@list.Question</span>
+                                </td>
+                                <td class="CorrectOption">
+                                    <span>@list.CorrectOption</span>
+                                </td>
+                                <td class="SelectedOption">
+                                    <span>@list.SelectedOption</span>
+                                </td>
+                                <td class="isCorrect" align="center">
+                                    @if (@list.Score == 0)
+                                    {
+                                        <button class="btn btn-danger glyphicon glyphicon-remove" disabled></button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success glyphicon glyphicon-ok" disabled></button>
+                                    }
+                                </td>
+                                <td class="Score" align="center">
+                                    <span>@list.Score</span>
+                                </td>                                
+                            </tr>
+                        }
+                    </table><br />
+                    <table id="tblUsers" class="table table-striped table-bordered" style="width:30%">
+                        <tr>
+                            <th>Total Score</th>
+                        </tr>
+                        <tr>
+                            <th><span class="text-info glyphicon glyphicon-ok"> @ViewData["total"]</span></th>
+                        </tr>
+                    </table>
+
+                    <button class="btn btn-info" data-toggle="collapse" data-target="#ReportToggle">Report</button><br />
+                    <div id="ReportToggle" class="collapse">
+                        @Html.Label("Please write below your query:")<br />
+                        @Html.TextArea("report", new { @class = "form-control", @placeholder = "Type Query" })<br />
+                        <button type="submit" id="submit" class="btn btn-success btn-sm" style="width:100%;"><span class="glyphicon glyphicon-ok"></span> Submit</button>
+                    </div><br />
+
+                    <a href="@Url.Action("GetAnswers", "Student")">Click here to go back.</a>
+                    
+                    <div id="snackbar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
